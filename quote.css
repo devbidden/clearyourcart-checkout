@@ -81,9 +81,21 @@ body {
       font-size: 15px;
     }
 
-    .add {
+    .add{
       font-size: 15px;
       height: 2.6em;
       width: 4em;
     }
+    
+  #results {
+    font-size: 7px;
+    font-weight: lighter;
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto 0;
+  }
+
   }
