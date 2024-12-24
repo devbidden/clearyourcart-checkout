@@ -27,7 +27,7 @@ document.querySelector(".add").addEventListener("click", function (event) {
 
   // Create a paragraph for the product link
   const productText = document.createElement("p");
-  productText.innerHTML = `<strong>Product Link:</strong> ${productLink}`;
+  productText.innerHTML = shortenLink(`<strong>Product Link:</strong> ${productLink}`);
   textContainer.appendChild(productText);
 
   // Create a paragraph for the quantity
@@ -275,4 +275,36 @@ function makeid(length) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+}
+function shortenLink(text) {
+  // Ensure the text starts with http or https
+  let url = text.trim();
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      const httpIndex = url.indexOf('http://');
+      const httpsIndex = url.indexOf('https://');
+      if (httpIndex !== -1) {
+          url = url.substring(httpIndex);
+      } else if (httpsIndex !== -1) {
+          url = url.substring(httpsIndex);
+      } else {
+          return ''; // Return empty if no valid link found
+      }
+  }
+
+  // Shorten the text to end at .html or .com
+  const htmlIndex = url.indexOf('.html');
+  const queryindex = url.indexOf('?');
+  let endIndex = -1;
+
+  if (htmlIndex !== -1 ) {
+      endIndex = htmlIndex + 5; // Include '.html'
+  } 
+  if (queryindex !== -1 ) {
+    endIndex = queryindex; // stop at ?
+} 
+  if (endIndex !== -1) {
+      url = url.substring(0, endIndex);
+  }
+
+  return url;
 }
