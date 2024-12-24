@@ -78,7 +78,7 @@ function adjustCheckoutPosition() {
       checkoutButton = document.createElement("button");
       checkoutButton.className = "checkout-btn";
       checkoutButton.textContent = "Checkout";
-      checkoutButton.style.backgroundColor = "green";
+      checkoutButton.style.backgroundColor = " #3b7dd8";
       checkoutButton.style.color = "white";
       checkoutButton.style.border = "none";
       checkoutButton.style.padding = "10px 20px";
@@ -120,8 +120,126 @@ function processCheckout() {
   // Save data to Firebase
   saveOrderToFirebase(orderId, products);
 
-  // Display the order ID to the user
-  alert(`Checkout successful! Your Order ID is ${orderId}`);
+  // Show a custom dialog with the order ID
+  showOrderIdDialog(orderId, function () {
+    // Save the order to Firebase
+    saveOrderToFirebase(orderId, products);
+
+    // Redirect to the desired URL
+  //  window.location.href = "http://www.w3schools.com";
+});
+}
+
+function showOrderIdDialog(orderId, callback) {
+  // Create the overlay
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+  `;
+
+  // Create the dialog box
+  const dialogBox = document.createElement("div");
+  dialogBox.style.cssText = `
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 80%;
+  `;
+
+  // Add the order ID message
+  const messageText = document.createElement("p");
+  messageText.innerHTML = `Your Order ID is <strong>${orderId}</strong>. \n\nCopy the ID and send to any of our social handles below`;
+  dialogBox.appendChild(messageText);
+
+  // Add the "Copy" button
+  const copyButton = document.createElement("button");
+  copyButton.textContent = "Copy Order ID";
+  copyButton.style.cssText = `
+      background-color: #3b7dd8;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+      margin-right: 10px;
+  `;
+  copyButton.addEventListener("click", function () {
+      navigator.clipboard.writeText(orderId).then(() => {
+         alert("Order ID copied to clipboard!");
+      });
+  });
+  dialogBox.appendChild(copyButton);
+
+  // Add the "OK" button
+  const okButton = document.createElement("button");
+  okButton.textContent = "OK";
+  okButton.style.cssText = `
+      background-color: #195276;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+  `;
+  okButton.addEventListener("click", function () {
+    window.location.href = "http://127.0.0.1:5500/GetQuote/getquote.html?";
+
+      document.body.removeChild(overlay); // Remove the overlay
+      if (callback) callback(); // Execute the callback function
+  });
+  dialogBox.appendChild(okButton);
+
+  // Add social media icons
+  const socialMediaContainer = document.createElement("div");
+  socialMediaContainer.style.cssText = `
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+  `;
+
+  // Create WhatsApp icon
+  const whatsappIcon = document.createElement("a");
+  whatsappIcon.href = "https://wa.me/your_number"; // Replace with your WhatsApp link
+  whatsappIcon.target = "_blank";
+  whatsappIcon.innerHTML = `<img src="https://img.icons8.com/195276/48/000000/whatsapp.png" alt="WhatsApp" style="margin: 0 10px; cursor: pointer;">`;
+  socialMediaContainer.appendChild(whatsappIcon);
+
+  // Create Twitter icon
+  const twitterIcon = document.createElement("a");
+  twitterIcon.href = "https://twitter.com/your_profile"; // Replace with your Twitter profile link
+  twitterIcon.target = "_blank";
+  twitterIcon.innerHTML = `<img src="https://img.icons8.com/195276/48/000000/twitter.png" alt="Twitter" style="margin: 0 10px; cursor: pointer;">`;
+  socialMediaContainer.appendChild(twitterIcon);
+
+  // Create Instagram icon
+  const instagramIcon = document.createElement("a");
+  instagramIcon.href = "https://www.instagram.com/your_profile"; // Replace with your Instagram profile link
+  instagramIcon.target = "_blank";
+  instagramIcon.innerHTML = `<img src="https://img.icons8.com/195276/48/000000/instagram-new.png" alt="Instagram" style="margin: 0 10px; cursor: pointer;">`;
+  socialMediaContainer.appendChild(instagramIcon);
+
+  // Add the social media container to the dialog box
+  dialogBox.appendChild(socialMediaContainer);
+
+  // Add the dialog box to the overlay
+  overlay.appendChild(dialogBox);
+
+  // Add the overlay to the body
+  document.body.appendChild(overlay);
 }
 
 function saveOrderToFirebase(orderId, products) {
